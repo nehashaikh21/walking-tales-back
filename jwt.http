@@ -2,7 +2,7 @@
 POST http://localhost:9000/auth/login
 Content-Type: application/json
 
-{"email":"name@gmail.com", "password":"plain123"}
+{"email":"tiyas@gmail.com", "password":"tiyas123"}
 
 ### REGISTER
 POST http://localhost:9000/auth/register

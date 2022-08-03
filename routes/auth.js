@@ -1,6 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
+import authm from "../middleware/authm.js";
 const router = express.Router();
 
 router.get("/me", (req, res) => {
@@ -13,6 +14,7 @@ router.get("/me", (req, res) => {
   }
   const decodedToken = jwt.verify(token, process.env.SECRET);
   res.status(200).json({ success: true, data: decodedToken });
+  req.user = decodedToken.id;
 });
 
 router.post("/login", async (req, res) => {
@@ -45,16 +47,28 @@ router.post("/login", async (req, res) => {
             {
               userId: existingUser._id,
               email: existingUser.email,
+              user_name: existingUser.user_name,
               isLoggedIn: true,
             },
             process.env.SECRET,
             { expiresIn: "1h" }
           );
 
+          res.cookie('jwt', token, {
+            expires: d, 
+            httpOnly: true,
+            secure: req.secure || req.headers['x-forwarded-proto'] === 'https', 
+            sameSite: 'none'
+        });
+
           res.status(201).json({
             success: true,
             message: "login successful",
-            data: { token },
+            token,
+            user :{
+              id: existingUser._id,
+              username: existingUser.user_name,
+            }
           });
         } catch (e) {
           console.log({ e });
@@ -80,7 +94,7 @@ router.post("/login", async (req, res) => {
 // logout
 // register
 router.post("/register", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password} = req.body;
 
   // check if is already used
   const existingUser = await User.findOne({ email: email });
@@ -135,6 +149,47 @@ router.post("/register", async (req, res) => {
       });
     }
   }
+});
+
+router.post("/tokenIsValid", async (req, res) => {
+  try {
+    const token = req.header("x-auth-token");
+    if (!token) return res.json(false);
+
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    if (!verified) return res.json(false);
+
+    const user = await User.findById(verified.id);
+    if (!user) return res.json(false);
+
+    return res.json(true);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//get the username
+router.get("/", authm, async (req, res) => {
+  const user = await User.findById(req.user);
+  res.json({
+    email: user.email,
+    username: user.user_name,
+    id: user._id,
+  });
+});
+
+//check if user is logged in
+router.get("/user", async(req, res, next) => {
+  let currentUser;
+  if (req.cookies.jwt) {
+      const token = req.cookies.jwt;
+      const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+      currentUser = await User.findById(decoded.id);
+    } else {
+      currentUser =  null;
+    }    
+
+    res.status(200).send({ currentUser });
 });
 
 export default router;

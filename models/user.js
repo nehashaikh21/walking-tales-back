@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
   user_name:String,
   email: String,
   password: String,
-  location: String,
+  city: String,
 });
 
 userSchema.pre("save", async function save(next) {
