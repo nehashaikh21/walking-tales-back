@@ -55,7 +55,6 @@ router.post("/login", async (req, res) => {
           );
 
           res.cookie('jwt', token, {
-            expires: d, 
             httpOnly: true,
             secure: req.secure || req.headers['x-forwarded-proto'] === 'https', 
             sameSite: 'none'
@@ -94,10 +93,10 @@ router.post("/login", async (req, res) => {
 // logout
 // register
 router.post("/register", async (req, res) => {
-  const { email, password} = req.body;
+  const { email} = req.body;
 
   // check if is already used
-  const existingUser = await User.findOne({ email: email });
+  const existingUser = await User.findOne({email });
   if (existingUser !== null) {
     res.status(400).send({
       success: false,
