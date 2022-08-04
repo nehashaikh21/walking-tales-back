@@ -47,19 +47,19 @@ router.post("/login", async (req, res) => {
             {
               userId: existingUser._id,
               email: existingUser.email,
-              user_name: existingUser.user_name,
+              // user_name: existingUser.user_name,
               isLoggedIn: true,
             },
             process.env.SECRET,
             { expiresIn: "1h" }
           );
 
-          res.cookie('jwt', token, {
-            expires: d, 
-            httpOnly: true,
-            secure: req.secure || req.headers['x-forwarded-proto'] === 'https', 
-            sameSite: 'none'
-        });
+        //   res.cookie('jwt', token, {
+        //     expires: d, 
+        //     httpOnly: true,
+        //     secure: req.secure || req.headers['x-forwarded-proto'] === 'https', 
+        //     sameSite: 'none'
+        // });
 
           res.status(201).json({
             success: true,
