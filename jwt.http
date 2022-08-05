@@ -9,3 +9,6 @@ POST http://localhost:9000/auth/register
 Content-Type: application/json
 
 {"First_name":"tiyas", "Last_name":"biswas","user_name":"tiyas","email":"tiyas@gmail.com","password":"tiyas123","city":"Tuebingen"}
+
+### CHAT
+GET http://localhost:9000/auth/chat
