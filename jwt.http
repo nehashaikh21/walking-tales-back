@@ -2,10 +2,10 @@
 POST http://localhost:9000/auth/login
 Content-Type: application/json
 
-{"email":"tiyas@gmail.com", "password":"tiyas123"}
+{"email":"deeptest@gmail.com", "password":"12345"}
 
 ### REGISTER
 POST http://localhost:9000/auth/register
 Content-Type: application/json
 
-{"First_name":"tiyas", "Last_name":"biswas","user_name":"tiyas","email":"tiyas@gmail.com","password":"tiyas123","city":"Tuebingen"}
+{"First_name":"Deep", "Last_name":"test","user_name":"Deep","email":"deeptest@gmail.com","password":"12345","city":"berlin"}
