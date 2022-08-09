@@ -33,7 +33,7 @@ connectToMongo().then((connection) => {
   const server = createServer(app);
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: "https://moonlit-malasada-cd1011.netlify.app",
       methods: ["GET", "POST"],
     },
   });
@@ -60,7 +60,7 @@ connectToMongo().then((connection) => {
   
   app.use(
     cors({
-      origin: ["http://localhost:3000"],
+      origin: ["https://moonlit-malasada-cd1011.netlify.app"],
       methods: ["GET", "POST"],
       credentials: true,
     })
