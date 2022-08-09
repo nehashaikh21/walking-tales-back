@@ -9,6 +9,7 @@ import {Server} from "socket.io";
 import userRouter from "./routes/user.js";
 
 
+
 if (!process.env.PORT) {
   console.log("please provide PORT number and try again");
   process.exit();
