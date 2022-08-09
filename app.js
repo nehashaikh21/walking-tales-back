@@ -19,18 +19,16 @@ if (!process.env.SECRET) {
   console.log("please provide SECRET and try again");
   process.exit();
 }
+app.use(cors());
 
 connectToMongo().then((connection) => {
   const app = express();
   app.use("/users", userRouter);
-  app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-  });
+
   const server = createServer(app);
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: [process.env.CLIENT],
       methods: ["GET", "POST"],
     },
   });
@@ -57,7 +55,7 @@ connectToMongo().then((connection) => {
   
   app.use(
     cors({
-      origin: ["http://localhost:3000"],
+      origin: [process.env.CLIENT],
       methods: ["GET", "POST"],
       credentials: true,
     })
