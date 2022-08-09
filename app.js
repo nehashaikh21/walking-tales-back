@@ -19,11 +19,26 @@ if (!process.env.SECRET) {
   console.log("please provide SECRET and try again");
   process.exit();
 }
-app.use(cors());
+
 
 connectToMongo().then((connection) => {
   const app = express();
+  app.use(cors());
+  
+
+  app.use(express.json());
+  
+  app.use(
+    cors({
+      origin: [process.env.CLIENT],
+      methods: ["GET", "POST"],
+      credentials: true,
+    })
+  );
+  app.use(cookieParser());
+  
   app.use("/users", userRouter);
+  app.use("/auth", authRouter);
 
   const server = createServer(app);
   const io = new Server(server, {
@@ -32,6 +47,8 @@ connectToMongo().then((connection) => {
       methods: ["GET", "POST"],
     },
   });
+
+
 
   io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);
@@ -51,19 +68,7 @@ connectToMongo().then((connection) => {
   
   });
   
-  app.use(express.json());
   
-  app.use(
-    cors({
-      origin: [process.env.CLIENT],
-      methods: ["GET", "POST"],
-      credentials: true,
-    })
-  );
-  app.use(cookieParser());
-  
-  app.use("/auth", authRouter);
-
   server.listen(process.env.PORT, () =>
     console.log("listening on " + process.env.PORT)
   );
