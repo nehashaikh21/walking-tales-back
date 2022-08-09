@@ -9,8 +9,6 @@ import {Server} from "socket.io";
 import userRouter from "./routes/user.js";
 
 
-
-
 if (!process.env.PORT) {
   console.log("please provide PORT number and try again");
   process.exit();
@@ -19,10 +17,23 @@ if (!process.env.SECRET) {
   console.log("please provide SECRET and try again");
   process.exit();
 }
-app.use(cors());
 
 connectToMongo().then((connection) => {
   const app = express();
+
+  
+  app.use(
+    cors({
+      origin: [process.env.CLIENT],
+      methods: ["GET", "POST"],
+      credentials: true,
+    })
+  );
+  app.use(cookieParser());
+  app.use(express.json());
+
+  app.use("/auth", authRouter);
+
   app.use("/users", userRouter);
 
   const server = createServer(app);
@@ -51,19 +62,6 @@ connectToMongo().then((connection) => {
   
   });
   
-  app.use(express.json());
-  
-  app.use(
-    cors({
-      origin: [process.env.CLIENT],
-      methods: ["GET", "POST"],
-      credentials: true,
-    })
-  );
-  app.use(cookieParser());
-  
-  app.use("/auth", authRouter);
-
   server.listen(process.env.PORT, () =>
     console.log("listening on " + process.env.PORT)
   );
