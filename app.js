@@ -6,6 +6,7 @@ import connectToMongo from "./models/index.js";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
 import {Server} from "socket.io";
+import userRouter from "./routes/user.js";
 
 
 
@@ -21,6 +22,11 @@ if (!process.env.SECRET) {
 
 connectToMongo().then((connection) => {
   const app = express();
+  app.use("/users", userRouter);
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+  });
   const server = createServer(app);
   const io = new Server(server, {
     cors: {
@@ -48,6 +54,7 @@ connectToMongo().then((connection) => {
   });
   
   app.use(express.json());
+  
   app.use(
     cors({
       origin: ["http://localhost:3000"],

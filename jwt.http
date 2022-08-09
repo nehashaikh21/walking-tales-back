@@ -9,3 +9,6 @@ POST http://localhost:9000/auth/register
 Content-Type: application/json
 
 {"First_name":"Deep", "Last_name":"test","user_name":"Deep","email":"deeptest@gmail.com","password":"12345","city":"berlin"}
+
+### GET USERS
+GET http://localhost:9000/users
