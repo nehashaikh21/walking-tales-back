@@ -8,9 +8,6 @@ import { createServer } from "http";
 import {Server} from "socket.io";
 import userRouter from "./routes/user.js";
 
-
-
-
 if (!process.env.PORT) {
   console.log("please provide PORT number and try again");
   process.exit();
@@ -19,21 +16,16 @@ if (!process.env.SECRET) {
   console.log("please provide SECRET and try again");
   process.exit();
 }
+app.use(cors());
 
 connectToMongo().then((connection) => {
   const app = express();
   app.use("/users", userRouter);
-  app.use(cors())
-  app.use((req,res,next)=>{
-    res.setHeader('Access-Control-Allow-Origin','*');
-    res.setHeader('Access-Control-Allow-Methods','GET,POST,PUT,PATCH,DELETE');
-    res.setHeader('Access-Control-Allow-Methods','Content-Type','Authorization');
-    next(); 
-})
+
   const server = createServer(app);
   const io = new Server(server, {
     cors: {
-      origin: "https://moonlit-malasada-cd1011.netlify.app",
+      origin: [process.env.CLIENT],
       methods: ["GET", "POST"],
     },
   });
@@ -60,7 +52,7 @@ connectToMongo().then((connection) => {
   
   app.use(
     cors({
-      origin: ["https://moonlit-malasada-cd1011.netlify.app"],
+      origin: [process.env.CLIENT],
       methods: ["GET", "POST"],
       credentials: true,
     })
