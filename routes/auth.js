@@ -54,20 +54,20 @@ router.post("/login", async (req, res) => {
             { expiresIn: "1h" }
           );
 
-          res.cookie('jwt', token, {
+          res.cookie("jwt", token, {
             httpOnly: true,
-            secure: req.secure || req.headers['x-forwarded-proto'] === 'https', 
-            sameSite: 'none'
-        });
+            secure: req.secure || req.headers["x-forwarded-proto"] === "https",
+            sameSite: "none",
+          });
 
           res.status(201).json({
             success: true,
             message: "login successful",
             token,
-            user :{
+            user: {
               id: existingUser._id,
               username: existingUser.user_name,
-            }
+            },
           });
         } catch (e) {
           console.log({ e });
@@ -93,10 +93,10 @@ router.post("/login", async (req, res) => {
 // logout
 // register
 router.post("/register", async (req, res) => {
-  const { email} = req.body;
+  const { email } = req.body;
 
   // check if is already used
-  const existingUser = await User.findOne({email });
+  const existingUser = await User.findOne({ email });
   if (existingUser !== null) {
     res.status(400).send({
       success: false,
@@ -104,9 +104,10 @@ router.post("/register", async (req, res) => {
     });
   } else {
     try {
-      const { First_name,Last_name,user_name,email,password,city } = req.body;
+      const { First_name, Last_name, user_name, email, password, city } =
+        req.body;
 
-      const createdUser = await User.create({          
+      const createdUser = await User.create({
         First_name,
         Last_name,
         user_name,
@@ -169,6 +170,8 @@ router.post("/tokenIsValid", async (req, res) => {
 
 //get the username
 router.get("/", authm, async (req, res) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.send({ msg: "This has CORS enabled 🎈" });
   const user = await User.findById(req.user);
   res.json({
     email: user.email,
@@ -178,18 +181,17 @@ router.get("/", authm, async (req, res) => {
 });
 
 //check if user is logged in
-router.get("/user", async(req, res, next) => {
+router.get("/user", async (req, res, next) => {
   let currentUser;
   if (req.cookies.jwt) {
-      const token = req.cookies.jwt;
-      const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-      currentUser = await User.findById(decoded.id);
-    } else {
-      currentUser =  null;
-    }    
+    const token = req.cookies.jwt;
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    currentUser = await User.findById(decoded.id);
+  } else {
+    currentUser = null;
+  }
 
-    res.status(200).send({ currentUser });
+  res.status(200).send({ currentUser });
 });
-
 
 export default router;
