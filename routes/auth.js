@@ -170,8 +170,6 @@ router.post("/tokenIsValid", async (req, res) => {
 
 //get the username
 router.get("/", authm, async (req, res) => {
-  res.set("Access-Control-Allow-Origin", "*");
-  res.send({ msg: "This has CORS enabled 🎈" });
   const user = await User.findById(req.user);
   res.json({
     email: user.email,

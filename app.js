@@ -5,10 +5,8 @@ import authRouter from "./routes/auth.js";
 import connectToMongo from "./models/index.js";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
-import {Server} from "socket.io";
+import { Server } from "socket.io";
 import userRouter from "./routes/user.js";
-
-
 
 if (!process.env.PORT) {
   console.log("please provide PORT number and try again");
@@ -22,7 +20,6 @@ if (!process.env.SECRET) {
 connectToMongo().then((connection) => {
   const app = express();
 
-  
   app.use(
     cors({
       origin: [process.env.CLIENT],
@@ -48,27 +45,33 @@ connectToMongo().then((connection) => {
   io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);
 
-    socket.on('message', ({name, message }) => {
-      io.emit('message', { name, message })
-    })
-  
+    socket.on("message", ({ name, message }) => {
+      io.emit("message", { name, message });
+    });
+
     // socket.on("join_room", (data) => {
     //   socket.join(data);
     //   // console.log(`User with ID: ${socket.id} joined room: ${data}`);
     // });
-  
+
     // socket.on("send_message", (data) => {
     //   socket.to(data.room).emit("receive_message", data);
     // });
-  
+
     // socket.on("disconnect", () => {
     //   console.log("User Disconnected", socket.id);
     // });
-
-
-  
   });
-  
+
+  app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", process.env.CLIENT); // update to match the domain you will make the request from
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    next();
+  });
+
   server.listen(process.env.PORT, () =>
     console.log("listening on " + process.env.PORT)
   );
