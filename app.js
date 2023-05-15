@@ -52,9 +52,6 @@ connectToMongo().then((connection) => {
     },
   });
 
-  // Enable CORS for socket.io
-  io.origins([process.env.CLIENT]);
-
   io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);
 
