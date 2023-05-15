@@ -30,6 +30,15 @@ connectToMongo().then((connection) => {
   app.use(cookieParser());
   app.use(express.json());
 
+  app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", process.env.CLIENT); // update to match the domain you will make the request from
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    next();
+  });
+
   app.use("/auth", authRouter);
 
   app.use("/users", userRouter);
@@ -62,15 +71,6 @@ connectToMongo().then((connection) => {
     // socket.on("disconnect", () => {
     //   console.log("User Disconnected", socket.id);
     // });
-  });
-
-  app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", process.env.CLIENT); // update to match the domain you will make the request from
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
-    );
-    next();
   });
 
   server.listen(process.env.PORT, () =>
